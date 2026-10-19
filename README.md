@@ -138,17 +138,9 @@ plugins/launch-compliance/
       references/                      # one file per check category + jurisdictions
     policy-docs/
       SKILL.md                         # policy drafts from real code facts
-      references/
+      references/`
 examples/vibe-app/                     # broken demo app for testing
 ```
-
-## Roadmap
-
-- GitHub Action that runs the scanner on pull requests and comments new findings
-- SARIF output for GitHub code scanning
-- Rendered checks (contrast, focus, consent timing) via a headless browser when the app can run locally
-- More stacks (Go web frameworks, .NET, SwiftUI/Kotlin native)
-- Vietnamese report output
 
 ## Contributing
 
