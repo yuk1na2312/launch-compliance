@@ -1,0 +1,23 @@
+{
+  "name": "launch-compliance",
+  "displayName": "LaunchCompliance",
+  "version": "0.1.0",
+  "description": "Repo-aware launch compliance audit: privacy, data protection, legal pages, consumer protection and accessibility. Detects signals in your code, prioritizes what you actually need, and helps fix it.",
+  "author": {
+    "name": "yuk1na2312"
+  },
+  "repository": "https://github.com/yuk1na2312/launch-compliance",
+  "license": "MIT",
+  "keywords": [
+    "privacy",
+    "compliance",
+    "gdpr",
+    "ccpa",
+    "accessibility",
+    "wcag",
+    "cookie-consent",
+    "legal",
+    "vibe-coding",
+    "launch-checklist"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "launch-compliance",
+  "description": "LaunchCompliance: repo-aware privacy, legal, consumer-protection and accessibility audits for apps before launch.",
+  "owner": {
+    "name": "yuk1na2312"
+  },
+  "plugins": [
+    {
+      "name": "launch-compliance",
+      "source": "./plugins/launch-compliance",
+      "description": "Scan a repo, detect what it actually collects and which third parties it talks to, and get a prioritized launch-compliance report with fixes."
+    }
+  ]
+}

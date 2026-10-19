@@ -1,0 +1,14 @@
+{
+  "name": "vibe-app",
+  "private": true,
+  "dependencies": {
+    "next": "15.0.0",
+    "react": "19.0.0",
+    "@supabase/supabase-js": "^2.45.0",
+    "stripe": "^16.0.0",
+    "resend": "^4.0.0",
+    "openai": "^4.60.0",
+    "posthog-js": "^1.160.0",
+    "@sentry/nextjs": "^8.30.0"
+  }
+}
