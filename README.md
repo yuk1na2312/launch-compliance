@@ -4,7 +4,7 @@
 
 Vibe-coded apps ship in a weekend and skip this layer entirely: no privacy policy, Google Analytics firing before consent, a Supabase service-role key in the browser, tables without Row Level Security, fake testimonials from the template. LaunchCompliance catches these before your users (or a regulator) do.
 
-> ⚠️ LaunchCompliance is a developer checklist, not legal advice. Have a lawyer review anything high-stakes.
+> ⚠️ LaunchCompliance is a developer checklist, not legal advice.
 
 ## What it checks
 
