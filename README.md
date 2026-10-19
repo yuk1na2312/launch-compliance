@@ -128,18 +128,28 @@ Applicable checks: 29 / 31
 ## Repository layout
 
 ```
-.claude-plugin/marketplace.json        # this repo is a plugin marketplace
-plugins/launch-compliance/
-  .claude-plugin/plugin.json
-  skills/
-    audit/
-      SKILL.md                         # scan → verify → report → fix
-      scripts/detect_signals.py        # stdlib-only signal detector
-      references/                      # one file per check category + jurisdictions
-    policy-docs/
-      SKILL.md                         # policy drafts from real code facts
-      references/`
-examples/vibe-app/                     # broken demo app for testing
+launch-compliance/
+├── .claude-plugin/marketplace.json     → makes the repo installable as a plugin source
+├── plugins/launch-compliance/
+│   ├── .claude-plugin/plugin.json      → plugin name, version, author
+│   └── skills/
+│       ├── audit/                      → main skill (/launch-compliance:audit)
+│       │   ├── SKILL.md                → instructions: scan → verify → report → fix
+│       │   ├── scripts/detect_signals.py → scanner, plain Python, no dependencies
+│       │   └── references/
+│       │       ├── checks-privacy.md      PRV-01..13
+│       │       ├── checks-security.md     SEC-01..04
+│       │       ├── checks-legal.md        LEG-01..05
+│       │       ├── checks-consumer.md     CON-01..05
+│       │       ├── checks-accessibility.md A11Y-01..04
+│       │       ├── jurisdictions.md       what changes per country
+│       │       ├── signals.md             manual fallback if Python isn't available
+│       │       └── report-template.md     format of REPORT.md
+│       └── policy-docs/                → second skill (/launch-compliance:policy-docs)
+│           ├── SKILL.md                → drafts privacy/terms/refund/cookie pages
+│           └── references/             → facts sheet + document outlines
+├── examples/vibe-app/                  → broken demo app for testing
+└── README, CONTRIBUTING, LICENSE
 ```
 
 ## Contributing
