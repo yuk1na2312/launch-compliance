@@ -11,13 +11,20 @@ Every document you produce is a **draft for human review**, not legal advice. Sa
 
 ## Step 1 - Build the facts sheet
 
-If `.launch-compliance/signals.json` or `.launch-compliance/REPORT.md` exists (from the `audit` skill), start from it. Otherwise run the detector from the audit skill's folder:
+If `.launch-compliance/signals.json` or `.launch-compliance/REPORT.md` exists (from the `audit` skill), start from it. Otherwise run the detector from the `audit` skill folder next to this one. `<skill-dir>` is the absolute path of the folder that contains this `SKILL.md`. Commands usually run from the project root, so a bare `../audit/...` path will not resolve.
+
+```bash
+# use `python3`, or `python` / `py -3` on Windows
+python3 "<skill-dir>/../audit/scripts/detect_signals.py" <repo-root> --out <repo-root>/.launch-compliance/signals.json
+```
+
+In Claude Code, with the skill installed as part of the plugin:
 
 ```bash
 python3 "${CLAUDE_PLUGIN_ROOT}/skills/audit/scripts/detect_signals.py" <repo-root> --out <repo-root>/.launch-compliance/signals.json
 ```
 
-If the script isn't available (for example, this skill was installed on its own), read dependency manifests, schema/migrations/models, and third-party call sites yourself.
+If the script isn't available (for example, the `audit` skill is not installed next to this one), read dependency manifests, schema/migrations/models, and third-party call sites yourself.
 
 Then verify and fill in `references/facts-sheet.md`: data categories with their source files, purposes, third parties with what each receives, cookies and storage keys, payment model, AI usage, user-generated content, retention, user-rights mechanisms that exist in code (deletion, export, unsubscribe). Only include what you confirmed in code.
 

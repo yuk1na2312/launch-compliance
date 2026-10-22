@@ -1,6 +1,6 @@
 # LaunchCompliance
 
-**Repo-aware launch compliance for apps built fast.** LaunchCompliance is a Claude plugin that reads your codebase, works out what personal data the app collects and which third parties it sends it to, and tells you which privacy, legal, consumer-protection and accessibility pieces you are missing, with `file:line` evidence and fixes.
+**Repo-aware launch compliance for apps built fast.** LaunchCompliance is a set of portable agent skills, packaged as a Claude Code plugin, that reads your codebase, works out what personal data the app collects and which third parties it sends it to, and tells you which privacy, legal, consumer-protection and accessibility pieces you are missing, with `file:line` evidence and fixes.
 
 Vibe-coded apps ship in a weekend and skip this layer entirely: no privacy policy, Google Analytics firing before consent, a Supabase service-role key in the browser, tables without Row Level Security, fake testimonials from the template. LaunchCompliance catches these before your users (or a regulator) do.
 
@@ -72,7 +72,51 @@ claude plugin install launch-compliance@launch-compliance
 
 Zip a skill folder (`plugins/launch-compliance/skills/audit` and/or `.../policy-docs`) and upload it as a custom skill. You can then ask Claude to audit a repo you've connected or uploaded.
 
-### Without Claude
+### Other coding agents
+
+The two skills follow the open [Agent Skills](https://agentskills.io) layout: YAML `name` + `description` frontmatter in `SKILL.md`, with `references/` and `scripts/` resolved relative to the skill folder. They work as-is in OpenCode, Codex CLI, Cursor, GitHub Copilot, Gemini CLI and other agents that read `SKILL.md`; installing means putting the whole `audit` and `policy-docs` folders in that agent's skills directory.
+
+| Agent | Project-level | User-level | Docs |
+|---|---|---|---|
+| OpenCode | `.opencode/skills/` | `~/.config/opencode/skills/` | [skills](https://opencode.ai/v2/docs/skills) |
+| Codex CLI | `.agents/skills/` | `~/.agents/skills/` | [skills](https://developers.openai.com/codex/skills) |
+| Cursor | `.agents/skills/` or `.cursor/skills/` | `~/.agents/skills/` or `~/.cursor/skills/` | [skills](https://cursor.com/docs/context/skills) |
+| GitHub Copilot | `.github/skills/` or `.agents/skills/` | `~/.copilot/skills/` or `~/.agents/skills/` | [skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) |
+| Gemini CLI | `.gemini/skills/` or `.agents/skills/` | `~/.gemini/skills/` or `~/.agents/skills/` | [skills](https://geminicli.com/docs/cli/skills/) |
+
+`.agents/skills/` is read by every agent in the table except OpenCode, so it is the simplest single target if you use more than one. Run the command from the root of the app you want to audit, set `SRC` to the `skills` folder of this repository, and set `SKILLS` to a directory from the table. Symlinks keep the installed skills in sync with the checkout; copy instead if your agent does not follow symlinks.
+
+```bash
+SRC=/path/to/launch-compliance/plugins/launch-compliance/skills
+SKILLS=.agents/skills                      # or any directory from the table, e.g. .opencode/skills
+mkdir -p "$SKILLS"
+for s in audit policy-docs; do ln -s "$SRC/$s" "$SKILLS/$s"; done
+```
+
+Anywhere symlinks are not an option, replace `ln -s` with `cp -R` in the loop. On Windows, symlinks need Developer Mode or an elevated shell, so copy the folders instead; set `$src` and `$dest` to the same source and project or user directory:
+
+```powershell
+$src  = "C:\path\to\launch-compliance\plugins\launch-compliance\skills"
+$dest = ".opencode\skills"                          # project-level
+# $dest = "$HOME\.config\opencode\skills"           # user-level instead
+
+New-Item -ItemType Directory -Force $dest | Out-Null
+Copy-Item -Recurse "$src\audit", "$src\policy-docs" $dest
+```
+
+Restart the agent, or start a new session, after installing. Codex CLI, Cursor, Copilot and Gemini CLI also read the shared `~/.agents/skills` user directory.
+
+#### Agents without skill support
+
+If an agent has no skills directory, add one line to the project's `AGENTS.md` that points at the `SKILL.md` path:
+
+```markdown
+Before launch, privacy, payments, auth or legal-page work, read and follow `/path/to/launch-compliance/plugins/launch-compliance/skills/audit/SKILL.md`.
+```
+
+Use the absolute path, or a path relative to your app. The skill runs the scanner from its own folder, so no other install step is needed.
+
+### The scanner on its own
 
 The scanner is a single Python file with no dependencies:
 
@@ -80,7 +124,7 @@ The scanner is a single Python file with no dependencies:
 python3 plugins/launch-compliance/skills/audit/scripts/detect_signals.py path/to/your-app --md
 ```
 
-It prints a prioritized candidate list and can write JSON (`--out signals.json`). The candidates are unverified; the Claude skill does the verification.
+It prints a prioritized candidate list and can write JSON (`--out signals.json`). The candidates are unverified; the skill does the verification.
 
 ## Use
 
@@ -92,7 +136,9 @@ In Claude Code, from your project:
 
 or just ask: *"Is this app ready to launch? Check privacy and compliance."*
 
-Claude will:
+In other agents, ask the same question in plain language, or invoke the skill by name: `$audit` in Codex CLI, `/audit` in Cursor, `@audit` in OpenCode, and automatic activation elsewhere when the task matches the description.
+
+The agent will:
 
 1. **Scan** - run the signal detector over dependencies and source
 2. **Verify** - read the evidence for every candidate and drop false positives
@@ -104,6 +150,8 @@ To draft legal pages from what the code actually does:
 ```
 /launch-compliance:policy-docs
 ```
+
+In other agents, invoke `policy-docs` the same way as `audit`.
 
 It builds a facts sheet from the code (data fields, vendors, cookies, payments, AI usage), asks you only for business facts it can't know, then writes the privacy policy, terms, refund and cookie pages into your project and links them in the footer.
 
